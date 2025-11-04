@@ -42,30 +42,35 @@
         </div>
         <div id="shortCutsDiv" class="flex flex-row justify-center items-center"></div>
         
+
     </section>
 
-    <section id="addIconSect" class="hidden bg-white text-black rounded-xl w-120 px-5 py-5 space-y-6">
-        <div class="mb-3">
-            <p class="font-semibold text-[15px] text-gray-500">Add shortcut</p>
-        </div>
-        <div class="space-y-5">
-            <div class="">
-                <span class="text-[12px] text-gray-500 font-semibold">Name</span>
-                <input id="userShortCutName" type="text" id="" class="w-full bg-[#e9e7e4] hover:bg-[#E4E2DF] border-b rounded-t-md px-3 py-1 focus:outline-none">
+    <section id="overlayBg" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+
+        <div id="addIconSect" class="flex flex-col bg-white text-black rounded-xl w-120 px-6 py-6 space-y-6 shadow-lg">
+            <div class="mb-3">
+                <p class="font-semibold text-[15px] text-gray-500">Add shortcut</p>
             </div>
-            <div>
-                <span class="text-[12px] text-gray-500 font-semibold">URL</span>
-                <input id="userShortCutUrl" type="text" id="" class="w-full bg-[#e9e7e4] hover:bg-[#E4E2DF] border-b rounded-l-sm px-3 py-1 focus:outline-none">
+            <div class="space-y-5">
+                <div class="">
+                    <span class="text-[12px] text-gray-500 font-semibold">Name</span>
+                    <input id="userShortCutName" type="text" class="text-[14px] w-full bg-[#e9e7e4] hover:bg-[#E4E2DF] border-b rounded-t-md px-3 py-1 focus:outline-none">
+                </div>
+                <div>
+                    <span class="text-[12px] text-gray-500 font-semibold">URL</span>
+                    <input id="userShortCutUrl" type="text" class="text-[14px] w-full bg-[#e9e7e4] hover:bg-[#E4E2DF] border-b rounded-l-sm px-3 py-1 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex flex-row justify-end text-sm space-x-2">
+                <button id="cancelBtn" class="text-gray-500 border border-gray-400 rounded-full text-[13px] font-semibold px-4 py-2 hover:cursor-pointer">
+                    Cancel
+                </button>
+                <button id="doneBtn" class="text-white bg-gray-600 rounded-full text-[13px] font-semibold px-4 py-2 hover:cursor-not-allowed">
+                    Done
+                </button>
             </div>
         </div>
-        <div class="flex flex-row justify-end text-sm space-x-2">
-            <button id="cancelBtn" class="text-gray-500 border border-gray-400 rounded-full text-[13px] font-semibold px-4 py-2 hover:cursor-pointer">
-                Cancel
-            </button>
-            <button id="doneBtn" class="text-white bg-gray-500 rounded-full text-[13px] font-semibold px-4 py-2 hover:cursor-pointer">
-                Done
-            </button>
-        </div>
+
     </section>
 
     
