@@ -55,7 +55,7 @@ function mapShortCuts() {
         `<div draggable="true" class="icon group flex flex-col items-center hover:bg-gray-100 px-8 pt-4 rounded-md space-y-3 hover:cursor-pointer relative">
             
             <img src="images/icon_more_vert.svg" class="dotsHandl absolute top-1 right-0 w-8 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer rounded-full hover:bg-gray-200">
-            <a href="${shortCut.url}" target="_blank">
+            <a href="${shortCut.url}">
                 <img class="w-[55px] text-gray-200 bg-[#E4E2DF] px-3.5 py-3.5 rounded-full" src="${favicon}" alt="">
             </a>
             <p class="text-[13px] font-medium">${shortCut.name}</p>
