@@ -2,7 +2,6 @@ let overlayBg = document.getElementById("overlayBg")
 let addIconSect = document.getElementById("addIconSect")
 let shortCutsDiv = document.getElementById("shortCutsDiv")
 
-let addShortCut = document.getElementById("addShortCut")
 let cancelBtn = document.getElementById("cancelBtn")
 let doneBtn = document.getElementById("doneBtn")
 
@@ -11,47 +10,36 @@ let userShortCutUrl = document.getElementById("userShortCutUrl")
 
 let defaultShortCut = [
     {
-        name : "webstore",
+        name : "Webstore",
         url : "https://chromewebstore.google.com/"
     }
 ]
 
-let shortCuts;
+let shortCuts = JSON.parse(localStorage.getItem("shortCuts")) || [
 
-try {
-    
-    let stored = JSON.parse(localStorage.getItem("shortCuts"));
-    shortCuts = Array.isArray(stored) ? stored : defaultShortCut;
-
-} catch (e) {
-
-    shortCuts = defaultShortCut;
-    console.warn("Storage reset due to invalid data:", e);
-
-}
-
-if (!shortCuts) {
-
-    shortCuts = 
     {
-        name: "webstore",
+        name: "Webstore",
         url: "https://chromewebstore.google.com/"
     }
-    saveToLocalStorage();
 
-};
+];
 
 if (!localStorage.getItem("shortCuts")) {
     saveToLocalStorage()
 };
 
+// ---------- Save ----------
+
 function saveToLocalStorage() {
     localStorage.setItem("shortCuts" , JSON.stringify(shortCuts))
 };
 
+// ---------- Map Shortcuts ----------
+
 function mapShortCuts() {
+    
     let shortCutLclStrg = JSON.parse(localStorage.getItem("shortCuts")) || []
-    if (!Array.isArray(shortCutLclStrg)) shortCutLclStrg = [];
+    if ( !Array.isArray(shortCutLclStrg) ) shortCutLclStrg = [];
 
     shortCutsDiv.innerHTML = ""
 
@@ -68,7 +56,7 @@ function mapShortCuts() {
             
             <img src="images/icon_more_vert.svg" class="dotsHandl absolute top-1 right-0 w-8 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer rounded-full hover:bg-gray-200">
             <a href="${shortCut.url}" target="_blank">
-                <img class="w-[58px] text-gray-200 bg-gray-200 px-3.5 py-3.5 rounded-full" src="${favicon}" alt="">
+                <img class="w-[55px] text-gray-200 bg-[#E4E2DF] px-3.5 py-3.5 rounded-full" src="${favicon}" alt="">
             </a>
             <p class="text-[13px] font-medium">${shortCut.name}</p>
 
@@ -84,18 +72,26 @@ function mapShortCuts() {
 
     // ----------<<< Add Shortcut Button >>>----------
 
-    shortCutsDiv.innerHTML +=
-    `<div draggable="false" id="addShortCut" class="flex flex-col items-center hover:bg-gray-100 px-4 py-3 rounded-md space-y-3 hover:cursor-pointer">
-        <i class="fa-solid fa-plus text-[23px] before:flex before:flex-row before:justify-center bg-gray-200 rounded-full text-gray-500 px-7.5 py-4.5"></i>
-        <p class="text-[12px] font-medium">Add Shortcut</p>
-    </div>
-    `;
+    if (shortCuts.length < 10) {
+        
+        document.getElementById("shortCutsDiv").innerHTML +=
+        `<div draggable="false" id="addShortCut" class="flex flex-col items-center hover:bg-gray-100 px-4 py-3 rounded-md space-y-3 hover:cursor-pointer">
+            <i class="fa-solid fa-plus text-[23px] before:flex before:flex-row before:justify-center bg-gray-200 rounded-full text-gray-500 px-7.5 py-4.5"></i>
+            <p class="text-[12px] font-medium">Add Shortcut</p>
+        </div>
+        `;
+
+    }
 
     // ----------<<< Add Shortcut Popup >>>----------
+    let addShortCut = document.getElementById("addShortCut")
     
-    document.getElementById("addShortCut").addEventListener("click" , () => {
-        overlayBg.classList.remove("hidden")
-    });
+    if (addShortCut) {
+        addShortCut.addEventListener("click" , () => {
+            doneBtn.dataset.mode = "add";
+            overlayBg.classList.remove("hidden")
+        });
+    }
 
     // ----------<<< Dots Menu Handling >>>----------
 
@@ -126,13 +122,15 @@ function mapShortCuts() {
 
     // ----------<<< Edit Button (open popup) >>>----------
 
-    allEditBtn.forEach(btn => {
+    allEditBtn.forEach((btn , i) => {
         
-        btn.addEventListener("click" , (e) => {
+        btn.addEventListener("click" , () => {
 
-            let iconDiv = e.target.closest(".icon")
-            userShortCutName.value = iconDiv.querySelector("p").textContent
-            userShortCutUrl.value = iconDiv.querySelector("a").href
+            userShortCutName.value = shortCuts[i].name
+            userShortCutUrl.value = shortCuts[i].url
+            
+                doneBtn.dataset.mode = "edit"
+                doneBtn.dataset.index = i
 
             overlayBg.classList.remove("hidden")
         })
@@ -140,20 +138,17 @@ function mapShortCuts() {
     });
 
     // ----------<<< Delete Button >>>----------
-    allDelBtn.forEach(btn => {
-        
-        btn.addEventListener("click" , (e) => {
 
-            // Get shortcut name
-            let nameToDelete = e.target.parentElement.parentElement.querySelector("p").textContent
+    allDelBtn.forEach((btn , i) => {
 
-            // Filter shortcut name and Delete
-            shortCuts = shortCuts.filter(s => s.name !== nameToDelete)
+        btn.addEventListener("click" , () => {
 
-            // Save and Update UI 
-            saveToLocalStorage()
-            mapShortCuts()
-            
+            if (confirm("Are you sure you want to delete this shortcut?")) {
+                shortCuts.splice(i, 1);
+                saveToLocalStorage();
+                mapShortCuts();
+            }
+
         })
 
     });
@@ -175,13 +170,13 @@ function enableDragAndDrop() {
         icn.addEventListener("dragstart" , () => {
             draggedItem = icn
             icn.classList.add("opacity-50")
-        })
+        });
 
         icn.addEventListener("dragend" , () => {
             draggedItem = null
             icn.classList.remove("opacity-50")
-            saveToLocalStorage();
-        })
+            saveToLocalStorage()
+        });
 
         icn.addEventListener("dragover", (e) => e.preventDefault());
 
@@ -205,7 +200,7 @@ function enableDragAndDrop() {
                 saveToLocalStorage()
                 
             }
-        })
+        });
 
     })
 
@@ -213,8 +208,9 @@ function enableDragAndDrop() {
 
 cancelBtn.addEventListener("click" , () => {
     overlayBg.classList.add("hidden")
+    userShortCutName.value = "";
+    userShortCutUrl.value = "";
 });
-
     
 [userShortCutName, userShortCutUrl].forEach(inp => {
 
@@ -236,23 +232,26 @@ doneBtn.addEventListener("click" , () => {
     
     let name = userShortCutName.value.trim()
     let url = userShortCutUrl.value.trim()
-
     if (!name || !url) return
 
-    if (name && url) {
-        
-        shortCuts.push({
-            name: name,
-            url: url
-        })
-
-        saveToLocalStorage()
-        mapShortCuts()
-
+    if ( shortCuts.some((s , i) => s.name.toLowerCase() === name.toLowerCase() && i != doneBtn.dataset.index) )  {
+        alert("Shortcut with this name already exists!");
+        return;
     }
+
+    if (doneBtn.dataset.mode === "edit") {
+        let index = doneBtn.dataset.index
+        shortCuts[index] = { name , url }
+    }
+    else {
+        shortCuts.push({ name , url })
+    }
+
+    saveToLocalStorage()
+    mapShortCuts()
     
+    overlayBg.classList.add("hidden")
     userShortCutName.value = ""
     userShortCutUrl.value = ""
-    overlayBg.classList.add("hidden")
 
 })
